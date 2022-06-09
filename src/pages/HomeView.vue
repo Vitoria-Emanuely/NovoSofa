@@ -1,6 +1,9 @@
 <template>
-    <h1 class="h1">{{ titulo }}</h1>    
-
+  <div>
+    <div class="d-flex justify-content-center mt-5">
+      <h1>{{ titulo }}</h1>
+    </div>
+  </div>
 </template>
 
 <script>

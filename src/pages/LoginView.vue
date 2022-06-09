@@ -96,6 +96,7 @@
         aria-label="Close"
       ></button>
     </div>
+    <aaa/>
   </div>
 </template>
 
@@ -103,12 +104,13 @@
 // import * as fb from '@/plugins/firebase'
 export default {
     data() {
-        // return {
+        return {
+          aaa:"aaa",
         //     user: {},
         //     show: false,
         //     errorLogin: false,
         //     novaConta: false,
-        // }
+        }
     },
     methods: {
         // reset() {

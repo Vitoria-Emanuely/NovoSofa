@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <div>
       <b-sidebar id="sidebar-1" title="NovoSofa" shadow>
         <b-list-group>
@@ -11,7 +12,7 @@
     </div>
     <div>
       <b-navbar toggleable="lg" type="dark" variant="info">
-        <b-navbar-brand href="#">NovoSofa</b-navbar-brand>
+        <b-navbar-brand href="/">NovoSofa</b-navbar-brand>
         <button class="btn sidebar-button" v-b-toggle.sidebar-1>
           <b-icon icon="list" aria-hidden="true"></b-icon>
         </button>
@@ -22,17 +23,19 @@
               <template #button-content>
                 <em>Perfil</em>
               </template>
-              <b-dropdown-item href="#">Minha Conta</b-dropdown-item>
-              
+              <b-dropdown-item href="/perfil">Minha Conta</b-dropdown-item>
+
               <b-dropdown-item href="/login">Sair
-                <!-- <router-link :to="'/login'">Sair</router-link> -->
+                <!--<router-link to="/login">Sair</router-link>-->
               </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
     </div>
+
     <router-view></router-view>
+    
     <footer class="navbar fixed-bottom d-flex justify-content-center">
       <span class="p-1"><small>Copyright &amp; 2022 NovoSofa. All Rights Reserved.</small></span>
     </footer>
