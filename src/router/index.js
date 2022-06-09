@@ -3,36 +3,34 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-const router =  new VueRouter ({
+const router = new VueRouter({
   mode: "history",
   base: "/",
   routes: [
     {
       path: '/',
-      component: () => import('@/layouts/DefaultLayout.vue'),
-      children: [
-          {
-              path: '',
-              name: 'Home',
-              component: () => import('@/pages/HomeView.vue'),
-              meta: { requiresAuth: true }
-            },
-      ]
-    },
-    {
-      path: '/',
       component: () => import('@/layouts/BlankLayout.vue'),
       children: [
-          {
-              path: '/login',
-              name: 'Login',
-              component: () => import('@/pages/LoginView.vue')
-            },
+        {
+          path: '/login',
+          name: 'Login',
+          component: () => import('@/pages/LoginView.vue')
+        },
+        {
+          path: '',
+          name: 'Home',
+          component: () => import('@/pages/HomeView.vue'),
+        },
+        {
+          path: 'perfil',
+          name: 'perfil',
+          component: () => import('@/pages/PerfilView.vue')
+        }
       ]
     },
   ]
 });
-  
+
 
 // router.beforeEach((to, from, next) => {
 //   auth.onAuthStateChanged((user) => {
@@ -44,5 +42,5 @@ const router =  new VueRouter ({
 //     }
 //   });
 // });
-  
+
 export default router
