@@ -9,13 +9,8 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
-      component: () => import('@/layouts/BlankLayout.vue'),
+      component: () => import('@/layouts/DefaultLayout.vue'),
       children: [
-        {
-          path: '/login',
-          name: 'Login',
-          component: () => import('@/pages/LoginView.vue')
-        },
         {
           path: '',
           name: 'Home',
@@ -25,6 +20,18 @@ const router = new VueRouter({
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/pages/PerfilView.vue')
+        }
+      ]
+    },
+
+    {
+      path: '/',
+      component: () => import('@/layouts/BlankLayout.vue'),
+      children: [
+        {
+          path: '/login',
+          name: 'Login',
+          component: () => import('@/pages/LoginView.vue')
         }
       ]
     },
