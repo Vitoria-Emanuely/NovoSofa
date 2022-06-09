@@ -20,11 +20,11 @@ const router =  new VueRouter ({
       ]
     },
     {
-      path: '/login',
+      path: '/',
       component: () => import('@/layouts/BlankLayout.vue'),
       children: [
           {
-              path: 'login',
+              path: '/login',
               name: 'Login',
               component: () => import('@/pages/LoginView.vue')
             },

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <router-view />
+  <div class="d-flex justify-content-center">
+    <router-view></router-view>
   </div>
 </template>
 
