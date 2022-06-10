@@ -13,7 +13,7 @@ const router = new VueRouter({
       children: [
         {
           path: '',
-          name: 'Home',
+          name: 'home',
           component: () => import('@/pages/HomeView.vue'),
         },
         {
@@ -30,8 +30,13 @@ const router = new VueRouter({
       children: [
         {
           path: '/login',
-          name: 'Login',
+          name: 'login',
           component: () => import('@/pages/LoginView.vue')
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: () => import('@/pages/RegisterView.vue')
         }
       ]
     },
@@ -39,15 +44,12 @@ const router = new VueRouter({
 });
 
 
-// router.beforeEach((to, from, next) => {
-//   auth.onAuthStateChanged((user) => {
-//     const requiresAuth = to.matched.some((x) => x.meta.requiresAuth);
-//     if (requiresAuth && !user) {
-//       next("/login");
-//     } else {
-//       next();
-//     }
-//   });
-// });
+router.beforeEach((to, from, next) => {
+  if (to.name !== "login" && to.name !== "register" && !localStorage.getItem('authUser')){
+    next({name: 'login'});
+  } else {
+    next();
+  }
+});
 
 export default router

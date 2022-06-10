@@ -1,25 +1,15 @@
 <template>
     <div>
-        <div class="container">
-            <div class="container">
-                <div class="d-flex justify-content-center mt-5">
-                    <h3>Seu Perfil</h3>
+        <div class="card card-body col-12">
+            <div class="d-flex justify-content-center mt-5">
+                <h3>Seu Perfil</h3>
+            </div>
+            <div class="d-flex justify-content-center mt-2 d-flex flex-column align-items-center">
+                <div class="row">
+                    <span for="" class=""><strong>Nome Completo:</strong> {{ form.completeName }}</span>
                 </div>
-                <div class="d-flex justify-content-center mt-2">
-                    <div class="row justify-content-around">
-                        <div class="col-4">
-                            <div class="col-4">
-                                <label for="" class="">Nome</label>
-                                <p>{{ nome }}</p>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="col-4">
-                                <label for="" class="">CPF</label>
-                                <p>{{ cpf }}</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row">
+                    <span for="" class=""><strong>CPF:</strong> {{ form.cpf }}</span>
                 </div>
             </div>
         </div>
@@ -28,30 +18,29 @@
 </template>
 
 <script>
-import axios from 'axios'
+
+import UsersModel from "@/models/UsersModel";
 
 export default {
     data() {
         return {
-            nome: null,
-            cpf: null
+            form: {
+                completeName: "",
+                cpf: "",
+                userId: ""
+            }
+
         }
     },
-
-    created: function () {
-        this.buscaDados();
+    async mounted() {
+        this.form.userId = JSON.parse(localStorage.getItem('authUser')).id;
+        let user = await UsersModel.params({ id: this.form.userId }).get();
+        this.form = {
+            completeName: user[0].completeName,
+            cpf: user[0].cpf
+        }
     },
-
     methods: {
-        buscaDados: function () {
-            axios.get('http://localhost:8091/buscaDados')
-                .then(function (res) {
-                    this.nome = res.data.results;
-                })
-                .catch(function (err) {
-                    console.log(err);
-                })
-        }
     },
 }
 </script>

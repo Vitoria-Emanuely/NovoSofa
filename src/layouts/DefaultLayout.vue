@@ -25,7 +25,7 @@
               </template>
               <b-dropdown-item href="/perfil">Minha Conta</b-dropdown-item>
 
-              <b-dropdown-item href="/login">Sair
+              <b-dropdown-item @click="logout()">Sair
                 <!--<router-link to="/login">Sair</router-link>-->
               </b-dropdown-item>
             </b-nav-item-dropdown>
@@ -59,6 +59,12 @@ export default {
       // ],
     }
   },
+  methods: {
+    logout() {
+      localStorage.removeItem('authUser');
+      this.$router.push({name: 'login'});
+    }
+  }
 }
 </script>
 

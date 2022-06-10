@@ -22,69 +22,28 @@
             </v-col>
         </v-row>
     </v-container>
-    <v-snackbar color="red" v-model="errorLogin" danger multline timeout="2000">Usuario ou senha inválidos</v-snackbar>
-    <v-dialog v-model="novaConta" persistent max-width="300">
-        <v-card>
-            <v-card-title>Conta não encontrada</v-card-title>
-            <v-card-text>A conta não foi localizada. Deseja criar uma nova conta com os dados informados?</v-card-text>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="green darken-1" text @click="criarNovaConta">Sim</v-btn>
-                <v-btn color="red darken-1" text @click="novaConta = false">Não</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+    
   </v-container> -->
   <div class="card-body card col-10">
     <h2 class="text-center">Login</h2>
-    <form class="col-10 d-flex flex-column" id="form">
+    <form class="col-10 d-flex flex-column">
       <label for="fUsername" class="form-label">Nome de Usuário</label>
-      <div id="formUsername" class="input-group mb-3">
-        <input id="fUsername" class="form-control" v-model="user.username" type="text" />
+      <div class="input-group mb-3">
+        <input class="form-control" v-model="form.username" type="text" />
       </div>
       <label for="fPass" class="form-label">Senha</label>
-      <div id="formPass" class="input-group mb-3">
-        <input id="fPass" class="form-control" v-model="user.password" type="password" />
+      <div  class="input-group mb-3">
+        <input class="form-control" v-model="form.password" type="password" />
       </div>
       <div class="d-flex justify-content-between">
-        <div id="formButton">
-          <button v-if="!loadingAuth" @click.prevent="authentication" class="btn btn-success">
+          <button type="button"  @click="login()" class="btn btn-primary">
             Entrar
           </button>
-          <button v-else class="btn btn-success" type="button" disabled>
+          <!-- <button v-else class="btn btn-success" type="button" disabled>
             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
             Loading...
-          </button>
-        </div>
-        <div>
-          <!-- <p id="changeState" @click="changeState(false)">
-            Não tem uma conta. Cadastre-se!
-          </p> -->
-          <b-button v-b-modal.modal-1>Cadastre-se</b-button>
-
-          <b-modal id="modal-1" title="Cadastro de Usuário">
-            <form class="d-flex flex-column" id="form">
-              <label for="fName" class="form-label">Nome Completo</label>
-              <div id="formName" class="input-group mb-3">
-                <input id="fName" class="form-control" v-model="user.name" type="text" />
-              </div>
-              <div class="row justify-content-around mb-3">
-              <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" value="Professor">Professor
-              </b-form-radio>
-              <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" value="Estudante">Estudante
-              </b-form-radio>
-              </div>
-              <label for="fUsername" class="form-label">Nome de Usuário</label>
-              <div id="formUsername" class="input-group mb-3">
-                <input id="fUsername" class="form-control" v-model="user.username" type="text" />
-              </div>
-              <label for="fPass" class="form-label">Senha</label>
-              <div id="formPass" class="input-group mb-3">
-                <input id="fPass" class="form-control" v-model="user.password" type="password" />
-              </div>
-            </form>
-          </b-modal>
-        </div>
+          </button> -->
+          <b-button @click="register()" class="btn btn-alert">Cadastre-se</b-button>
       </div>
     </form>
     <!-- <div
@@ -106,48 +65,46 @@
 </template>
 
 <script>
-// import * as fb from '@/plugins/firebase'
+import UsersModel from "@/models/UsersModel";
 export default {
   data() {
     return {
-      user: {},
-      show: false,
-      errorLogin: false,
-      novaConta: false,
+      form: {
+        username: "",
+        password: ""
+      },
     }
   },
-  methods: {
-    reset() {
-      this.user = {}
+  methods: { 
+    register() {
+      this.$router.push({name: 'register'});
     },
-    // async login() {
-    //     try {
-    //         await fb.auth.signInWithEmailAndPassword(this.user.email, this.user.password)
-    //         this.$router.push({name: "Home"})
-    //     } catch(error) {
-    //         const errorCode = error.code
-    //         switch(errorCode) {
-    //             case "auth/wrong-password":
-    //                 this.errorLogin = true
-    //                 break
-    //             case "auth/invalid-email":
-    //                 this.errorLogin = true
-    //                 break
-    //             case "auth/user-not-found":
-    //                 this.novaConta = true
-    //                 break
-    //             default:
-    //                 this.errorLogin = true
-    //                 break 
-    //         }
-    //     }
-    // },
-    // async criarNovaConta(){
-    //     this.novaConta = false
-    //     await fb.auth.createUserWithEmailAndPassword(this.user.email, this.user.password)
-    //     this.login()
-    // },
-  }
+
+    async login() {
+      let user = await UsersModel.params({username: this.form.username}).get();
+      if (!user || !user[0] || !user[0].username) {
+        console.log("Usuário ou senha incorretos");
+        this.clearForm();
+        return;
+      }
+      user = user[0];
+      if (user.password !== this.form.password) {
+        alert("Usuário ou senha incorretos OPA");
+        this.clearForm();
+        return;
+      }
+
+      localStorage.setItem('authUser', JSON.stringify(user));
+      this.$router.push({name: 'home'})
+    },
+
+    clearForm() {
+      this.form = {
+        username: "",
+        password: ""
+      }
+    }
+   }
 }
 </script>
 
@@ -155,5 +112,9 @@ export default {
 form {
   margin-left: auto;
   margin-right: auto;
+}
+
+.card-body {
+  margin-top: 23vh;
 }
 </style>
