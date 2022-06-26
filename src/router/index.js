@@ -45,7 +45,9 @@ const router = new VueRouter({
 
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== "login" && to.name !== "register" && !localStorage.getItem('authUser')){
+  // if (localStorage.getItem('expired' != null && ))
+  console.log(localStorage)
+  if (to.name !== "login" && to.name !== "register" && localStorage.getItem('token') == null){
     next({name: 'login'});
   } else {
     next();

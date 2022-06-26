@@ -1,101 +1,83 @@
 <template>
-  <!-- <v-container fill-height fluid text-center>
-    <v-container>
-        <v-img class="mx-auto" max-width="900" src="@/assets/images/bg.png"></v-img>
-        
-        <v-row>
-            <v-col class="purple--text text-center mx-auto pb-7 pt-16" cols="1" sm="4" offset="4">
-                <h1 class="h1">Login</h1>
-            </v-col>
-        </v-row>
-        <v-row id="box" class="elevation-3 mx-auto">
-            <v-col>
-                <v-form>
-                    <v-text-field label="Email" v-model="user.email"></v-text-field>
-                    <v-text-field label="Senha" v-model="user.password" 
-                    :type="show ? 'text' : 'password'"
-                    :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" 
-                    @click:append="show = !show" @keydown.enter="login"></v-text-field> 
-                    <v-btn color="purple" dark @click="login">Login</v-btn> 
-                    <v-btn class="ml-2" color="red" dark @click="reset">Cancelar</v-btn>               
-                </v-form>
-            </v-col>
-        </v-row>
-    </v-container>
-    
-  </v-container> -->
-  <div class="card-body card col-10">
-    <h2 class="text-center">Login</h2>
-    <form class="col-10 d-flex flex-column">
-      <label for="fUsername" class="form-label">Nome de Usuário</label>
-      <div class="input-group mb-3">
-        <input class="form-control" v-model="form.username" type="text" />
+  <div class="d-flex align-items-stretch min-height-100" style="height:100%">
+    <div class="bg-cover bg-img-login d-none d-md-inline-flex col-lg-8 col-md-6"></div>
+    <div class="card card-body mb-0 rounded-0 col-sm-12 col-md-6 col-lg-4 bg-login">
+      <form>
+        <div class="d-flex flex-column justify-content-center align-items-center">
+          <img src="../assets/logo_white.png" class="logo mb-1" alt="YuSocial">
+
+          <div class="col-md-12 form-group mt-3">
+            <input type="text" class="form-control mb-2" name="username" placeholder="Digite seu nome de usuário"
+              v-model="form.username" />
+          </div>
+
+          <div class="col-md-12 form-group">
+            <input type="password" class="form-control" name="password" placeholder="Digite sua senha" />
+          </div>
+
+          <div class="col-md-12 mb-2">
+            <button type="submit" class="btn-login mt-4" id="btn-grad" @click="login()">
+              Entrar
+            </button>
+          </div>
+        </div>
+      </form>
+
+
+      <div class="d-flex justify-content-center mt-3">
+        <span class="mr-1">Não tem uma conta?</span>
+        <a class="float-right cursor-pointer" @click="register()">Criar conta</a>
       </div>
-      <label for="fPass" class="form-label">Senha</label>
-      <div  class="input-group mb-3">
-        <input class="form-control" v-model="form.password" type="password" />
-      </div>
-      <div class="d-flex justify-content-between">
-          <button type="button"  @click="login()" class="btn btn-primary">
-            Entrar
-          </button>
-          <!-- <button v-else class="btn btn-success" type="button" disabled>
-            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-            Loading...
-          </button> -->
-          <b-button @click="register()" class="btn btn-alert">Cadastre-se</b-button>
-      </div>
-    </form>
-    <!-- <div
-      v-if="errorAuth"
-      class="alert alert-danger alert-dismissible"
-      role="alert"
-      id="liveAlert"
-    >
-      <strong>Alguma coisa deu errado. Tente de novo!</strong>
-      <button
-        @click.prevent="errorAuth = !errorAuth"
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
-    </div> -->
+
+    </div>
   </div>
 </template>
 
 <script>
-import UsersModel from "@/models/UsersModel";
+import axios from 'axios';
+
 export default {
   data() {
     return {
       form: {
         username: "",
         password: ""
-      },
+      }
     }
   },
-  methods: { 
+  methods: {
     register() {
-      this.$router.push({name: 'register'});
+      this.$router.push({ name: 'register' });
     },
 
     async login() {
-      let user = await UsersModel.params({username: this.form.username}).get();
-      if (!user || !user[0] || !user[0].username) {
-        console.log("Usuário ou senha incorretos");
-        this.clearForm();
-        return;
-      }
-      user = user[0];
-      if (user.password !== this.form.password) {
-        alert("Usuário ou senha incorretos OPA");
-        this.clearForm();
-        return;
+      var data = { login_usuario: this.form.username, senha_usuario: this.form.password };
+      var response = axios.post('http://localhost:8000/Login', data);
+
+      async function getResponse() {
+        try {
+          const value = await response;
+          return value;
+        } catch (err) {
+          console.log(err);
+        }
       }
 
-      localStorage.setItem('authUser', JSON.stringify(user));
-      this.$router.push({name: 'home'})
+      this.info = await getResponse()
+      this.info.data.forEach(el => {
+        localStorage.setItem('token', el.token);
+        localStorage.setItem('usuario_ref', el.usuario_ref);
+      });
+
+      console.log(localStorage)
+
+      // if (this.response.status == 404) {
+      //   console.log("Usuário ou senha incorretos");
+      //   this.clearForm();
+      //   return;
+      // }
+
+      this.$router.push({ name: 'home' })
     },
 
     clearForm() {
@@ -104,17 +86,84 @@ export default {
         password: ""
       }
     }
-   }
+  }
 }
 </script>
 
-<style>
-form {
-  margin-left: auto;
-  margin-right: auto;
+<style scoped>
+a, a:hover  {
+    color: #fff;
+} 
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
-.card-body {
-  margin-top: 23vh;
+.bg-img-login {
+  background-image: #fff;
+}
+
+.bg-login {
+  /* background: rgb(138, 11, 74); */
+  /* background: linear-gradient(58deg, rgba(138, 11, 74, 0.8) 2%, rgba(176, 16, 71, 0.8) 17%, rgba(219, 18, 49, 0.8) 49%, rgba(220, 56, 91, 0.8) 75%); */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+  background: #191654;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to top, #43C6AC, #191654);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #43C6AC, #191654);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+.logo {
+  width: 250px;
+}
+
+.form-control {
+  background-color: rgb(245, 245, 245, 0.4);
+  border-color: rgb(245, 245, 245, 0.4);
+  border-radius: 11px;
+  color: #fff;
+  padding: 20px;
+}
+
+input:focus {
+  box-shadow: 0 0 0 0;
+  border: 0 none;
+  outline: 0;
+}
+
+::-webkit-input-placeholder {
+  color: #fff;
+}
+
+.btn-login {
+  width: 100%;
+  border: 1px solid #FDFDFD;
+  border-radius: 11px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #FDFDFD;
+  background-color: transparent;
+}
+
+.btn-login:hover {
+  background-color: #FDFDFD;
+  color: #BE2340;
+}
+
+.btn-login {
+  outline: none;
+}
+
+.btn-login::-moz-focus-inner {
+  border: 0;
 }
 </style>

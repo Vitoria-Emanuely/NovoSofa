@@ -45,8 +45,6 @@
 
 <script>
 
-// import { DropdownPlugin } from 'bootstrap-vue'
-// Vue.use(DropdownPlugin)
 export default {
   data() {
     return {
@@ -61,7 +59,8 @@ export default {
   },
   methods: {
     logout() {
-      localStorage.removeItem('authUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario_ref');
       this.$router.push({name: 'login'});
     }
   }
@@ -76,5 +75,9 @@ export default {
 
 .navbar {
   background: #d5d5d5;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
