@@ -42,7 +42,8 @@ export default {
       form: {
         username: "",
         password: ""
-      }
+      },
+      info: ""
     }
   },
   methods: {
@@ -64,11 +65,12 @@ export default {
       }
 
       this.info = await getResponse()
+      console.log(this.info)
       this.info.data.forEach(el => {
         localStorage.setItem('token', el.token);
         localStorage.setItem('usuario_ref', el.usuario_ref);
       });
-
+      
       console.log(localStorage)
 
       // if (this.response.status == 404) {
