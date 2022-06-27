@@ -4,175 +4,87 @@
         <div class="card card-body mb-0 rounded-0 col-sm-12 col-md-6 col-lg-4 bg-login">
             <form>
                 <div class="d-flex flex-column justify-content-center align-items-center mb-3">
-                    <img src="../assets/logo_white.png" class="logo mb-1" alt="NovoSofaLogo">
-                </div>
+                    <img src="../assets/logo_white.png" class="logo mb-3" alt="NovoSofaLogo">
 
-                <!-- <div #dangerError class="form-row" *ngIf="invalidForm">
-                <small class="alert alert-danger text-center col-12" role="alert">
-                    {{ "REQUEST.FORM.INVALID" | translate }}
-                </small>
-            </div> -->
-
-                <div class="form-row">
-                    <div class="form-group col-12">
-                        <input type="text" class="form-control" name="completeName" v-model="form.completeName"
-                            @blur="v$.form.completeName.$touch" placeholder="Nome completo" autocomplete="off"
-                            :class="{ 'error-boarder': v$.form.completeName.$error }" />
-                        <small v-if="v$.form.completeName.$error">Campo obrigatório</small>
+                    <div class="form-group mt-3" v-if="this.error_message != '' && this.validatePassword()">
+                        <small class="alert alert-danger text-center" role="alert">
+                            {{ this.error_message }}
+                        </small>
                     </div>
 
-                    <div class="form-group col-6">
-                        <input type="text" class="form-control" name="username" v-model="form.username"
-                            @blur="v$.form.username.$touch" placeholder="Login do usuário" autocomplete="off"
-                            :class="{ 'error-boarder': v$.form.username.$error }" />
-                        <small v-if="v$.form.username.$error">Campo obrigatório</small>
+                    <div class="form-group mt-3" v-if="!this.validatePassword()">
+                        <small class="alert alert-danger text-center" role="alert">
+                            As senhas não concidem
+                        </small>
                     </div>
 
-                    <div class="form-group col-6">
-                        <input type="text" class="form-control" name="cpf" v-model="form.cpf" @blur="v$.form.cpf.$touch"
-                            placeholder="CPF" autocomplete="off" :class="{ 'error-boarder': v$.form.cpf.$error }"
-                            v-mask="'###.###.###-##'" />
-                        <small v-if="v$.form.cpf.$error">Campo obrigatório</small>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <input type="text" class="form-control" name="completeName" v-model="form.completeName"
+                                @blur="v$.form.completeName.$touch" placeholder="Nome completo" autocomplete="off"
+                                :class="{ 'error-boarder': v$.form.completeName.$error }" />
+                            <small v-if="v$.form.completeName.$error">Campo obrigatório</small>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <input type="text" class="form-control" name="username" v-model="form.username"
+                                @blur="v$.form.username.$touch" placeholder="Login do usuário" autocomplete="off"
+                                :class="{ 'error-boarder': v$.form.username.$error }" />
+                            <small v-if="v$.form.username.$error">Campo obrigatório</small>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <input type="text" class="form-control" name="cpf" v-model="form.cpf"
+                                @blur="v$.form.cpf.$touch" placeholder="CPF" autocomplete="off"
+                                :class="{ 'error-boarder': v$.form.cpf.$error }" v-mask="'###.###.###-##'" />
+                            <small v-if="v$.form.cpf.$error">Campo obrigatório</small>
+                        </div>
+
+                        <div class="form-group col-12">
+                            <input type="email" class="form-control" name="email" v-model="form.email"
+                                @blur="v$.form.email.$touch" placeholder="Email"
+                                :class="{ 'error-boarder': v$.form.email.$error }" />
+                            <small v-if="v$.form.email.$error">Campo obrigatório</small>
+                        </div>
+
+                        <div class="form-group col-12 row justify-content-around" style="margin-left:7.5px">
+                            <b-form-radio v-model="form.type" value="0">Estudante
+                            </b-form-radio>
+                            <b-form-radio v-model="form.type" value="1">Professor
+                            </b-form-radio>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <input type="password" class="form-control" name="password" v-model="form.password"
+                                @blur="v$.form.password.$touch" placeholder="Senha"
+                                :class="{ 'error-boarder': v$.form.password.$error }" />
+                            <small v-if="v$.form.password.$error">Campo obrigatório</small>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <input type="password" class="form-control" name="confirm_password"
+                                @blur="v$.form.confirm_password.$touch" placeholder="Confirme sua senha"
+                                :class="{ 'error-boarder': v$.form.confirm_password.$error }"
+                                @keydown.enter="register()" />
+                            <small v-if="v$.form.confirm_password.$error">Campo obrigatório</small>
+                        </div>
                     </div>
 
-                    <div class="form-group col-12">
-                        <input type="email" class="form-control" name="email" v-model="form.email"
-                            @blur="v$.form.email.$touch" placeholder="Email"
-                            :class="{ 'error-boarder': v$.form.email.$error }" />
-                        <small v-if="v$.form.email.$error">Campo obrigatório</small>
-
-
-                        <!-- <div *ngIf="control.errors?.required; else ref">
-                            <small class="text-white" *ngIf="!control.untouched && control.invalid">
-                                <i class="fa fa-exclamation-circle" aria-hidden="true"
-                                    *ngIf="!control.untouched && control.invalid"></i>
-                                {{ "REQUEST.EMAIL.REQUIRED" | translate }}
-                            </small>
-                        </div> -->
-                        <!-- <ng-template #ref>
-                            <small class="text-white" *ngIf="!control.untouched && control.invalid">
-                                <i class="fa fa-exclamation-circle" aria-hidden="true"
-                                    *ngIf="!control.untouched && control.invalid"></i>
-                                {{ "REQUEST.EMAIL.INVALID" | translate }}
-                            </small>
-                        </ng-template> -->
+                    <div type="button" class="btn-login d-flex justify-content-center align-items-center mt-3"
+                        @click="register()">
+                        Cadastrar
                     </div>
 
-                    <div class="form-group col-12 row justify-content-around" style="margin-left:7.5px">
-                        <b-form-radio v-model="form.type" value="0">Estudante
-                        </b-form-radio>
-                        <b-form-radio v-model="form.type" value="1">Professor
-                        </b-form-radio>
+                    <div class="d-flex justify-content-center mt-4">
+                        <p class="mr-1">Tem uma conta?</p>
+                        <a @click="goToLogin()" class="float-right cursor-pointer">
+                            Conecte-se!
+                        </a>
                     </div>
-
-                    <div class="form-group col-6">
-                        <input type="password" class="form-control" name="password" v-model="form.password"
-                            @blur="v$.form.password.$touch" placeholder="Senha"
-                            :class="{ 'error-boarder': v$.form.password.$error }" />
-                        <small v-if="v$.form.password.$error">Campo obrigatório</small>
-
-
-                        <!-- <div *ngIf="getControl('password'); let password;">
-                            <div *ngIf="password.errors?.required; else ref">
-                                <small class="text-white" *ngIf="!password.untouched && password.invalid">
-                                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                                    {{ "REQUEST.PASSWORD.REQUIRED" | translate }}
-                                </small>
-                            </div>
-                            <ng-template #ref>
-                                <small class="text-white" *ngIf="!password.untouched && password.invalid">
-                                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                                    {{ "REQUEST.PASSWORD.INVALID" | translate }}
-                                </small>
-                            </ng-template>
-                        </div> -->
-
-
-                    </div>
-
-                    <div class="form-group col-6">
-                        <input type="password" class="form-control" name="confirm_password"
-                            @blur="v$.form.confirm_password.$touch" placeholder="Confirme sua senha"
-                            :class="{ 'error-boarder': v$.form.confirm_password.$error }" />
-                        <small v-if="v$.form.confirm_password.$error">Campo obrigatório</small>
-                        
-
-
-                        <!-- <div
-                            *ngIf="{password: getControl('password'), passwordConf: getControl('passwordConfirmation')}; let controls;">
-                            <div
-                                *ngIf="!controls.password.errors && (!controls.passwordConf.untouched && controls.passwordConf.invalid)">
-                                <div *ngIf="controls.passwordConf.errors?.required; else ref">
-                                    <small class="text-white"
-                                        *ngIf="!controls.passwordConf.untouched && controls.passwordConf.invalid">
-                                        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                                        {{ "REQUEST.CONFIRM.PASSWORD.REQUIRED" | translate }}
-                                    </small>
-                                </div>
-                                <ng-template #ref>
-                                    <small class="text-white"
-                                        *ngIf="!controls.passwordConf.untouched && controls.passwordConf.invalid">
-                                        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                                        {{ "REQUEST.CONFIRM.PASSWORD.INVALID" | translate }}
-                                    </small>
-                                </ng-template>
-                            </div>
-                        </div> -->
-                    </div>
-                    <div v-if="!this.validatePassword()">
-                        <small class="text-white">As senhas não coicidem</small>
-                    </div>
-                </div>
-
-
-                <div type="submit" class="btn-login d-flex justify-content-center align-items-center mt-3"
-                    @click="register()">
-                    Cadastrar
-                </div>
-
-                <div class="d-flex justify-content-center mt-4">
-                    <p class="mr-1">Tem uma conta?</p>
-                    <a @click="goToLogin()" class="float-right cursor-pointer">
-                        Conecte-se!
-                    </a>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- <div class="card-body card col-10">
-        <form class="col-10 d-flex flex-column">
-            <label for="fName" class="form-label">Nome Completo</label>
-            <div id="formName" class="input-group mb-3">
-                <input id="fName" class="form-control" v-model="form.completeName" type="text" autocomplete="off" />
-            </div>
-            <div class="row justify-content-around mb-3">
-                <b-form-radio v-model="form.type" value="0">Estudante
-                </b-form-radio>
-                <b-form-radio v-model="form.type" value="1">Professor
-                </b-form-radio>
-            </div>
-            <label for="fUsername" class="form-label">Nome de Usuário</label>
-            <div id="formUsername" class="input-group mb-3">
-                <input id="fUsername" class="form-control" v-model="form.username" type="text" autocomplete="off" />
-            </div>
-            <label for="fEmail" class="form-label">Email</label>
-            <div id="formEmail" class="input-group mb-3">
-                <input id="fEmail" class="form-control" v-model="form.email" type="email" />
-            </div>
-            <label for="fCPF" class="form-label">CPF</label>
-            <div id="formCPF" class="input-group mb-3">
-                <input id="fCPF" class="form-control" v-model="form.cpf" type="text" autocomplete="off" />
-            </div>
-            <label for="fPass" class="form-label">Senha</label>
-            <div id="formPass" class="input-group mb-3">
-                <input id="fPass" class="form-control" v-model="form.password" type="password" />
-            </div>
-            <div class="d-flex justify-content-center">
-                <button @click="register()" class="btn btn-primary">Enviar</button>
-            </div>
-        </form>
-    </div> -->
 </template>
 
 <script>
@@ -197,7 +109,10 @@ export default {
                 password: "",
                 email: "",
                 confirm_password: ""
-            }
+            },
+            info: "",
+            error_message: "",
+            response: ""
         }
     },
     validations() {
@@ -210,7 +125,7 @@ export default {
                 password: { required },
                 email: { required, email },
                 confirm_password: { required }
-            }
+            },
         }
     },
     methods: {
@@ -218,29 +133,57 @@ export default {
             this.$router.push({ name: 'login' });
         },
         validatePassword() {
-            if (this.password === this.confirm_password)
+            if (this.form.password === this.form.confirm_password)
                 return true;
-            return false;    
+            return false;
         },
 
-        register() {
+        async register() {
             const isFormCorrect = this.v$.$validate()
             this.form.type = parseInt(this.form.type);
+            console.log(this.validatePassword())
             if (isFormCorrect && this.validatePassword()) {
                 var data = {
                     cpf: this.form.cpf, login_usuario: this.form.username, nome_usuario: this.form.completeName,
                     email_usuario: this.form.email, senha_usuario: this.form.password, tipo_usuario: this.form.type
                 }
-                console.log(data)
-                axios
-                    .post('http://localhost:8000/CriarNovoUsuario', data,)
-                    .then(response => (this.info = response.data)).catch(error => {
-                        if (error.response) {
-                            console.log(error.response)
-                        }
-                    })
+                this.response = axios.post('http://localhost:8000/CriarNovoUsuario', data)
 
-                this.goToLogin();
+                this.info = await this.getResponse()
+                console.log(this.info)
+                if (Object.getPrototypeOf(this.info) == "Error") {
+                    if (this.info.response.status === 400) {
+                        this.error_message = "Erro ao cadastrar o usuário. Tente novamente"
+                        this.clearForm();
+                        return;
+                    }
+                } else {
+                    this.goToLogin();
+
+                }
+                console.log(localStorage)
+                console.log(this.error_message)
+
+            }
+        },
+        async getResponse() {
+            try {
+                const value = await this.response;
+                return value;
+            } catch (err) {
+                return err;
+            }
+        },
+
+        clearForm() {
+            this.form = {
+                completeName: "",
+                username: "",
+                type: 0,
+                cpf: "",
+                password: "",
+                email: "",
+                confirm_password: ""
             }
         },
 
@@ -253,16 +196,21 @@ export default {
     border-color: #fff !important;
 }
 
+.alert-danger {
+    color: #721c24 !important;
+}
+
 small {
     color: #fff;
 }
 
-a, a:hover {
+a,
+a:hover {
     color: #fff;
-} 
+}
 
 .bg-img-login {
-  background-image: url('../assets/couch.webp');
+    background-image: url('../assets/couch.webp');
 }
 
 .cursor-pointer {
@@ -270,66 +218,66 @@ a, a:hover {
 }
 
 .bg-login {
-  /* background: rgb(138, 11, 74); */
-  /* background: linear-gradient(58deg, rgba(138, 11, 74, 0.8) 2%, rgba(176, 16, 71, 0.8) 17%, rgba(219, 18, 49, 0.8) 49%, rgba(220, 56, 91, 0.8) 75%); */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #fff;
-  background: #191654;
-  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #43C6AC, #191654);
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #43C6AC, #191654);
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    /* background: rgb(138, 11, 74); */
+    /* background: linear-gradient(58deg, rgba(138, 11, 74, 0.8) 2%, rgba(176, 16, 71, 0.8) 17%, rgba(219, 18, 49, 0.8) 49%, rgba(220, 56, 91, 0.8) 75%); */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+    background: #191654;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #43C6AC, #191654);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #43C6AC, #191654);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 }
 
 .logo {
-  width: 250px;
+    width: 250px;
 }
 
 .form-control {
-  background-color: rgb(245, 245, 245, 0.4);
-  border-color: rgb(245, 245, 245, 0.4);
-  border-radius: 11px;
-  color: #fff !important;
-  padding: 20px;
+    background-color: rgb(245, 245, 245, 0.4);
+    border-color: rgb(245, 245, 245, 0.4);
+    border-radius: 11px;
+    color: #fff !important;
+    padding: 20px;
 }
 
 input:focus {
-  box-shadow: 0 0 0 0;
-  border: 0 none;
-  outline: 0;
+    box-shadow: 0 0 0 0;
+    border: 0 none;
+    outline: 0;
 }
 
 ::-webkit-input-placeholder {
-  color: #fff;
+    color: #fff;
 }
 
 .btn-login {
-  width: 100%;
-  border: 1px solid #FDFDFD;
-  border-radius: 11px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  color: #FDFDFD;
-  background-color: transparent;
+    width: 100%;
+    border: 1px solid #FDFDFD;
+    border-radius: 11px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #FDFDFD;
+    background-color: transparent;
 }
 
 .btn-login:hover {
-  background-color: #FDFDFD;
-  color: #BE2340;
+    background-color: #FDFDFD;
+    color: #223F68;
 }
 
 .btn-login {
-  outline: none;
+    outline: none;
 }
 
 .btn-login::-moz-focus-inner {
-  border: 0;
+    border: 0;
 }
 </style>

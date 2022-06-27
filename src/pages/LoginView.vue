@@ -5,6 +5,11 @@
       <form>
         <div class="d-flex flex-column justify-content-center align-items-center">
           <img src="../assets/logo_white.png" class="logo mb-1" alt="YuSocial">
+          <div class="form-group mt-3" v-if="this.error_message != ''">
+            <small class="alert alert-danger text-center" role="alert">
+              {{ this.error_message }}
+            </small>
+          </div>
 
           <div class="col-md-12 form-group mt-3">
             <input type="text" class="form-control mb-2" name="username" placeholder="Digite seu nome de usuário"
@@ -12,11 +17,12 @@
           </div>
 
           <div class="col-md-12 form-group">
-            <input type="password" class="form-control" name="password" placeholder="Digite sua senha" />
+            <input type="password" class="form-control" name="password" placeholder="Digite sua senha"
+              v-model="form.password" @keydown.enter="login()" />
           </div>
 
           <div class="col-md-12 mb-2">
-            <button type="submit" class="btn-login mt-4" id="btn-grad" @click="login()">
+            <button type="button" class="btn-login mt-4" id="btn-grad" @click="login()">
               Entrar
             </button>
           </div>
@@ -43,7 +49,8 @@ export default {
         username: "",
         password: ""
       },
-      info: ""
+      info: "",
+      error_message: ""
     }
   },
   methods: {
@@ -60,24 +67,27 @@ export default {
           const value = await response;
           return value;
         } catch (err) {
-          console.log(err);
+          return err;
         }
       }
 
       this.info = await getResponse()
-      console.log(this.info)
-      this.info.data.forEach(el => {
-        localStorage.setItem('token', el.token);
-        localStorage.setItem('usuario_ref', el.usuario_ref);
-      });
-      
-      console.log(localStorage)
 
-      // if (this.response.status == 404) {
-      //   console.log("Usuário ou senha incorretos");
-      //   this.clearForm();
-      //   return;
-      // }
+      if (Object.getPrototypeOf(this.info) == "Error") {
+        if (this.info.response.status === 404) {
+          this.error_message = "Esse usuário não existe"
+          this.clearForm();
+          return;
+        }
+      } else {
+        this.info.data.forEach(el => {
+          localStorage.setItem('token', el.token);
+          localStorage.setItem('usuario_ref', el.usuario_ref);
+        });
+      }
+
+      console.log(localStorage)
+      console.log(this.error_message)
 
       this.$router.push({ name: 'home' })
     },
@@ -93,9 +103,10 @@ export default {
 </script>
 
 <style scoped>
-a, a:hover  {
-    color: #fff;
-} 
+a,
+a:hover {
+  color: #fff;
+}
 
 .cursor-pointer {
   cursor: pointer;
@@ -158,7 +169,7 @@ input:focus {
 
 .btn-login:hover {
   background-color: #FDFDFD;
-  color: #BE2340;
+  color: #223F68;
 }
 
 .btn-login {
