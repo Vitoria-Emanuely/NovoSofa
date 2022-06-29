@@ -1,18 +1,18 @@
 <template>
-    <div class="d-flex align-items-stretch min-height-100" style="height:100%">
+    <div class="d-flex align-items-stretch min-height-100" style="height:100%" ref="register">
         <div class="bg-cover bg-img-login d-none d-md-inline-flex col-lg-8 col-md-6"></div>
         <div class="card card-body mb-0 rounded-0 col-sm-12 col-md-6 col-lg-4 bg-login">
             <form>
                 <div class="d-flex flex-column justify-content-center align-items-center mb-3">
                     <img src="../assets/logo_white.png" class="logo mb-3" alt="NovoSofaLogo">
 
-                    <div class="form-group mt-3" v-if="this.error_message != '' && this.validatePassword()">
+                    <div class="form-group mt-3" v-if="this.error_message != '' && this.validate_pass">
                         <small class="alert alert-danger text-center" role="alert">
                             {{ this.error_message }}
                         </small>
                     </div>
 
-                    <div class="form-group mt-3" v-if="!this.validatePassword()">
+                    <div class="form-group mt-3" v-if="!this.validate_pass && this.validate_pass !== ''">
                         <small class="alert alert-danger text-center" role="alert">
                             As senhas não concidem
                         </small>
@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="form-group col-6">
-                            <input type="password" class="form-control" name="confirm_password"
+                            <input type="password" class="form-control" name="confirm_password" v-model="form.confirm_password"
                                 @blur="v$.form.confirm_password.$touch" placeholder="Confirme sua senha"
                                 :class="{ 'error-boarder': v$.form.confirm_password.$error }"
                                 @keydown.enter="register()" />
@@ -112,7 +112,9 @@ export default {
             },
             info: "",
             error_message: "",
-            response: ""
+            response: "",
+            loader: "spinner",
+            validate_pass: ""
         }
     },
     validations() {
@@ -134,15 +136,23 @@ export default {
         },
         validatePassword() {
             if (this.form.password === this.form.confirm_password)
-                return true;
+                return true;  
             return false;
         },
 
         async register() {
+            this.validate_pass = this.validatePassword();
+            let register = this.$refs.register;
+            let loader = this.$loading.show(
+                {
+                    container: register,
+                    loader: this.loader,
+                }
+            );
             const isFormCorrect = this.v$.$validate()
             this.form.type = parseInt(this.form.type);
-            console.log(this.validatePassword())
-            if (isFormCorrect && this.validatePassword()) {
+            console.log(this.validate_pass)
+            if (isFormCorrect && this.validate_pass) {
                 var data = {
                     cpf: this.form.cpf, login_usuario: this.form.username, nome_usuario: this.form.completeName,
                     email_usuario: this.form.email, senha_usuario: this.form.password, tipo_usuario: this.form.type
@@ -153,7 +163,7 @@ export default {
                 console.log(this.info)
                 if (Object.getPrototypeOf(this.info) == "Error") {
                     if (this.info.response.status === 400) {
-                        this.error_message = "Erro ao cadastrar o usuário. Tente novamente"
+                        this.error_message = "Erro ao cadastrar o usuário. Verifique se o usuário já existe"
                         this.clearForm();
                         return;
                     }
@@ -161,10 +171,10 @@ export default {
                     this.goToLogin();
 
                 }
-                console.log(localStorage)
-                console.log(this.error_message)
-
             }
+            setTimeout(() => {
+                    loader.hide();
+                }, 1000);
         },
         async getResponse() {
             try {
@@ -210,7 +220,7 @@ a:hover {
 }
 
 .bg-img-login {
-    background-image: url('../assets/couch.webp');
+    background: #fff;
 }
 
 .cursor-pointer {
@@ -266,15 +276,12 @@ input:focus {
     font-weight: 600;
     color: #FDFDFD;
     background-color: transparent;
+    outline: none;
 }
 
 .btn-login:hover {
     background-color: #FDFDFD;
     color: #223F68;
-}
-
-.btn-login {
-    outline: none;
 }
 
 .btn-login::-moz-focus-inner {

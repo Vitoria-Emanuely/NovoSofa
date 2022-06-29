@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-items-stretch min-height-100" style="height:100%">
+  <div class="d-flex align-items-stretch min-height-100" style="height:100%" ref="login">
     <div class="bg-cover bg-img-login d-none d-md-inline-flex col-lg-8 col-md-6"></div>
     <div class="card card-body mb-0 rounded-0 col-sm-12 col-md-6 col-lg-4 bg-login">
       <form>
@@ -50,7 +50,8 @@ export default {
         password: ""
       },
       info: "",
-      error_message: ""
+      error_message: "",
+      loader: "spinner",
     }
   },
   methods: {
@@ -59,6 +60,14 @@ export default {
     },
 
     async login() {
+      let login = this.$refs.login;
+      let loader = this.$loading.show(
+        {
+          container: login,
+          loader: this.loader,
+        }
+      );
+      
       var data = { login_usuario: this.form.username, senha_usuario: this.form.password };
       var response = axios.post('http://localhost:8000/Login', data);
 
@@ -74,8 +83,8 @@ export default {
       this.info = await getResponse()
 
       if (Object.getPrototypeOf(this.info) == "Error") {
-        if (this.info.response.status === 404) {
-          this.error_message = "Esse usuário não existe"
+        if (this.info.response.status === 403) {
+          this.error_message = "Usuário ou senha incorretos"
           this.clearForm();
           return;
         }
@@ -90,6 +99,9 @@ export default {
       console.log(this.error_message)
 
       this.$router.push({ name: 'home' })
+      setTimeout(() => {
+        loader.hide();
+      }, 1000);
     },
 
     clearForm() {

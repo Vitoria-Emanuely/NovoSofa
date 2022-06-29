@@ -12,9 +12,11 @@
     </div>
     <div>
       <b-navbar toggleable="lg" type="dark" variant="info">
-        <b-navbar-brand href="/">NovoSofa</b-navbar-brand>
+        <b-navbar-brand href="/">
+          <img src="../assets/logo_white.png" alt="" style="width: 28vh;">
+        </b-navbar-brand>
         <button class="btn sidebar-button" v-b-toggle.sidebar-1>
-          <b-icon icon="list" aria-hidden="true"></b-icon>
+          <!-- <b-icon icon="list" aria-hidden="true"></b-icon> -->
         </button>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -26,7 +28,6 @@
               <b-dropdown-item href="/perfil">Minha Conta</b-dropdown-item>
 
               <b-dropdown-item @click="logout()">Sair
-                <!--<router-link to="/login">Sair</router-link>-->
               </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
