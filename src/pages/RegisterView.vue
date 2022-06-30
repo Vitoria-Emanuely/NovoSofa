@@ -48,9 +48,11 @@
                         </div>
 
                         <div class="form-group col-12 row justify-content-around" style="margin-left:7.5px">
-                            <b-form-radio v-model="form.type" value="0">Estudante
+                            <b-form-radio v-model="form.type" value="0">Estudante Ensino Médio
                             </b-form-radio>
-                            <b-form-radio v-model="form.type" value="1">Professor
+                            <b-form-radio v-model="form.type" value="1">Estudante Ensino Superior
+                            </b-form-radio>
+                            <b-form-radio v-model="form.type" value="2">Professor
                             </b-form-radio>
                         </div>
 

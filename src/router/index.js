@@ -17,9 +17,14 @@ const router = new VueRouter({
           component: () => import('@/pages/HomeView.vue'),
         },
         {
-          path: 'perfil',
-          name: 'perfil',
-          component: () => import('@/pages/PerfilView.vue')
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/pages/ProfileView.vue')
+        },
+        {
+          path: 'bonds',
+          name: 'bonds',
+          component: () => import('@/pages/BondView.vue')
         }
       ]
     },

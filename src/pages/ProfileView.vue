@@ -1,5 +1,5 @@
 <template>
-    <div ref="perfil">
+    <div ref="profile">
         <div class="d-flex flex-column align-items-center mt-5">
             <h4 style="color: rgb(95, 93, 93);">
                 <i class="fa fa-user"></i>
@@ -80,7 +80,7 @@ export default {
         }
     },
     async mounted() {
-        let login = this.$refs.perfil;
+        let login = this.$refs.profile;
         let loader = this.$loading.show(
             {
                 container: login,

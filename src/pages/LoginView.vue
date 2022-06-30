@@ -67,7 +67,7 @@ export default {
           loader: this.loader,
         }
       );
-      
+
       var data = { login_usuario: this.form.username, senha_usuario: this.form.password };
       var response = axios.post('http://localhost:8000/Login', data);
 
@@ -86,6 +86,9 @@ export default {
         if (this.info.response.status === 403) {
           this.error_message = "Usuário ou senha incorretos"
           this.clearForm();
+          setTimeout(() => {
+            loader.hide();
+          });
           return;
         }
       } else {
