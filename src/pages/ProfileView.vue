@@ -9,21 +9,21 @@
                 <div class="card card-body">
                     <div class="row">
                         <div class="col-6">
-                            <div>
-                                <strong>Nome Completo: </strong>{{ form.completeName }}
-                            </div>
+                            <span>
+                                <strong>Nome Completo: </strong>{{ form.nome_usuario }}
+                            </span>
                         </div>
                         <div class="col-6">
-                            <div>
+                            <span>
                                 <strong>CPF: </strong>{{ form.cpf }}
-                            </div>
+                            </span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <div>
-                                <strong>Email: </strong>{{ form.email }}
-                            </div>
+                            <span>
+                                <strong>Email: </strong>{{ form.email_usuario }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -39,21 +39,21 @@
                 <div class="card card-body">
                     <div class="row">
                         <div class="col-6">
-                            <div>
-                                <strong>Curso: </strong>{{ form.completeName }}
-                            </div>
+                            <span>
+                                <strong>Curso: </strong>{{ form.nome_usuario }}
+                            </span>
                         </div>
                         <div class="col-6">
-                            <div>
+                            <span>
                                 <strong>Matéria: </strong>{{ form.cpf }}
-                            </div>
+                            </span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <div>
-                                <strong>Turma: </strong>{{ form.email }}
-                            </div>
+                            <span>
+                                <strong>Turma: </strong>{{ form.email_usuario }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -72,9 +72,7 @@ export default {
     data() {
         return {
             form: {
-                completeName: "",
-                cpf: "",
-                email: ""
+
             },
             loader: "spinner",
         }
@@ -102,13 +100,11 @@ export default {
 
         this.info = await getResponse()
         this.info.data.forEach(el => {
-            this.form.completeName = el.nome_usuario;
-            this.form.cpf = el.cpf;
-            this.form.email = el.email_usuario;
+            this.form = el;
         });
         setTimeout(() => {
-        loader.hide();
-      }, 1000);
+            loader.hide();
+        }, 1000);
     },
     methods: {
     },

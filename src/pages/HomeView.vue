@@ -8,7 +8,7 @@
           <h5>Seja bem-vindo(a)</h5>
           <span>Você não possui vínculos, deseja vincular-se?</span>
         </div>
-        <button class="btn btn-outline" @click="goToBonds()">
+        <button class="btn btn-outline btn-without-bond" @click="goToBonds()">
           Vincular-se
         </button>
       </div>
@@ -17,8 +17,66 @@
       <h2>Registro de Aulas</h2>
       <div class="d-flex col-10">
         <div class="card card-body">
+          <div class="row">
+            <div class="col-2">
+              <span>
+                <strong>Data: </strong>o
+              </span>
+            </div>
+            <div class="col-10">
+              <span>
+                <strong>Descrição: </strong>p
+              </span>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <b-button v-b-modal.modal class="btn btn-outline" style="width: 20%">
+              Cadastrar Registro
+            </b-button>
+          </div>
         </div>
       </div>
+    </div>
+    <div>
+      <b-modal id="modal" title="Cadastrar Registro de Aula" hide-footer>
+        <div class="form-row">
+          <div class="form-group col-12">
+            <b-form-group label="Curso:" v-slot="{ ariaDescribedby }">
+              <b-form-checkbox-group :aria-describedby="ariaDescribedby" name="course">
+              </b-form-checkbox-group>
+            </b-form-group>
+          </div>
+
+          <div class="form-group col-6">
+            <b-form-group label="Matéria:" v-slot="{ ariaDescribedby }">
+              <b-form-checkbox-group :aria-describedby="ariaDescribedby" name="subject">
+              </b-form-checkbox-group>
+            </b-form-group>
+          </div>
+
+          <div class="form-group col-6">
+            <b-form-group label="Turma:" v-slot="{ ariaDescribedby }">
+              <b-form-checkbox-group :aria-describedby="ariaDescribedby" name="class">
+              </b-form-checkbox-group>
+            </b-form-group>
+          </div>
+          <div class="form-group col-6">
+            <label>Data</label>
+            <input type="date" class="form-control" name="date" autocomplete="off" />
+          </div>
+
+          <div class="form-group col-12">
+            <label>Descrição</label>
+            <textarea type="text" class="form-control" name="description"></textarea>
+            <!-- <small v-if="v$.form.username.$error">Campo obrigatório</small> -->
+          </div>
+        </div>
+        <footer>
+          <b-button type="button" class="btn-outline d-flex justify-content-center align-items-center mt-3">
+            Cadastrar
+          </b-button>
+        </footer>
+      </b-modal>
     </div>
   </div>
 </template>
@@ -28,7 +86,7 @@
 export default {
   data() {
     return {
-      hasBond: false
+      hasBond: true
     }
   },
   methods: {
@@ -39,43 +97,62 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .bg-img {
-    background-image: url('../assets/couch.webp');
-    background-repeat: no-repeat;
-    background-position: center;
+  background-image: url('../assets/couch.webp');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .card-initial {
-    background-color: #F7F7F7;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  background-color: #F7F7F7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-initial img {
-    width: 250px;
+  width: 250px;
 }
 
 .card-initial span {
-    color: #8B8787;
+  color: #8B8787;
 }
 
-h5, h6 {
-    color: #777777;
+h5,
+h6 {
+  color: #777777;
+}
+
+.btn-without-bond {
+  background: #f5f5f5 !important;
+}
+
+.btn-without-bond:hover {
+  color: #f5f5f5
 }
 
 .btn-outline {
-    background: #F5F5F5;
-    color: #274F70 !important;
-    border-color: #274F70 !important;
-    border-radius: 11px !important;
-    width: 30%;
+  background: #fff;
+  color: #274F70 !important;
+  border-color: #274F70 !important;
+  border-radius: 11px !important;
+  width: 30%;
 }
 
 .btn-outline:hover {
-    background: #274F70 !important; 
-    color: #F5F5F5 !important;
+  background: #274F70 !important;
+  color: #fff !important;
 }
+
+.btn-secondary:focus {
+  background-color: #fff;
+}
+
+.form-control {
+    border-radius: 11px;
+    padding: 20px;
+}
+
 </style>

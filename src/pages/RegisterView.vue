@@ -153,7 +153,6 @@ export default {
             );
             const isFormCorrect = this.v$.$validate()
             this.form.type = parseInt(this.form.type);
-            console.log(this.validate_pass)
             if (isFormCorrect && this.validate_pass) {
                 var data = {
                     cpf: this.form.cpf, login_usuario: this.form.username, nome_usuario: this.form.completeName,
@@ -162,7 +161,7 @@ export default {
                 this.response = axios.post('http://localhost:8000/CriarNovoUsuario', data)
 
                 this.info = await this.getResponse()
-                console.log(this.info)
+                
                 if (Object.getPrototypeOf(this.info) == "Error") {
                     if (this.info.response.status === 400) {
                         this.error_message = "Erro ao cadastrar o usuário. Verifique se o usuário já existe"
