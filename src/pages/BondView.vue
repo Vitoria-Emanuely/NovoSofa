@@ -32,7 +32,7 @@
                             <label>Matérias:</label>
                             <div v-for="(sub, index) in subjectName" :key="index">
                                 <!-- <input type="checkbox" @change="check(index)" /> -->
-                                <input type="checkbox" :value="sub" v-model="selectedSubjects">
+                                <input type="checkbox" :value="subjectKey[index]" v-model="selectedSubjects">
                                 <label for="checkbox"> {{ sub }}</label>
                             </div>
                             <button type="button" class="btn btn-outline" @click="getClassBySubjects()"
