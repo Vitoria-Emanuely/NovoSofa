@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 84vh;">
+  <div style="height: 84vh;" ref="home">
     <div class="d-flex align-items-stretch flex-nowrap min-height-100 h-100" v-if="!hasBond">
       <div class="bg-cover bg-img d-none d-md-inline-flex col-lg-5 col-md-4"></div>
       <div class="card card-body mb-0 rounded-0 col-sm-12 col-md-8 col-lg-7 card-initial">
@@ -83,16 +83,74 @@
 
 <script>
 
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      hasBond: true
+      hasBond: true,
+      token: "",
+      user: {},
+      response: "",
+      loader: "spinner",
     }
+  },
+  mounted() {
+    this.token = localStorage.getItem('token');
+    this.getUser();
   },
   methods: {
     goToBonds() {
       this.$router.push({ name: 'bonds' });
-    }
+    },
+    async getResponse() {
+      try {
+        const value = await this.response;
+        return value;
+      } catch (err) {
+        return err;
+      }
+    },
+    async getUser() {
+      var data = { usuario_ref: localStorage.getItem('usuario_ref'), token: this.token }
+      this.response = axios
+        .get('http://localhost:8000/Usuario?login=' + data.usuario_ref + '&token=' + data.token)
+      var info = await this.getResponse()
+      info.data.forEach(el => {
+        this.user = el;
+      });
+      this.getBonds();
+    },
+    async getBonds() {
+      let login = this.$refs.home;
+      let loader = this.$loading.show(
+        {
+          container: login,
+          loader: this.loader,
+        }
+      );
+      this.response = axios
+        .get('http://localhost:8000/VinculosUsuario?userType=' + this.user.tipo_usuario + '&token=' + this.token)
+      var info = await this.getResponse();
+      if (Object.getPrototypeOf(info) == "Error") {
+        if (info.response.status === 404) {
+          this.hasBond = false;
+          setTimeout(() => {
+            loader.hide();
+          }, 1000);
+          return;
+        }
+      } else {
+        info.data.forEach(el => {
+          this.course = el.curso;
+          this.subjects = el.materias;
+          this.classS = el.turmas;
+        });
+        setTimeout(() => {
+          loader.hide();
+        }, 1000);
+      }
+    },
   }
 }
 </script>
@@ -151,8 +209,7 @@ h6 {
 }
 
 .form-control {
-    border-radius: 11px;
-    padding: 20px;
+  border-radius: 11px;
+  padding: 20px;
 }
-
 </style>

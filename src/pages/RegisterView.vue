@@ -64,8 +64,9 @@
                         </div>
 
                         <div class="form-group col-6">
-                            <input type="password" class="form-control" name="confirm_password" v-model="form.confirm_password"
-                                @blur="v$.form.confirm_password.$touch" placeholder="Confirme sua senha"
+                            <input type="password" class="form-control" name="confirm_password"
+                                v-model="form.confirm_password" @blur="v$.form.confirm_password.$touch"
+                                placeholder="Confirme sua senha"
                                 :class="{ 'error-boarder': v$.form.confirm_password.$error }"
                                 @keydown.enter="register()" />
                             <small v-if="v$.form.confirm_password.$error">Campo obrigatório</small>
@@ -138,7 +139,7 @@ export default {
         },
         validatePassword() {
             if (this.form.password === this.form.confirm_password)
-                return true;  
+                return true;
             return false;
         },
 
@@ -161,21 +162,25 @@ export default {
                 this.response = axios.post('http://localhost:8000/CriarNovoUsuario', data)
 
                 this.info = await this.getResponse()
-                
+
                 if (Object.getPrototypeOf(this.info) == "Error") {
                     if (this.info.response.status === 400) {
                         this.error_message = "Erro ao cadastrar o usuário. Verifique se o usuário já existe"
                         this.clearForm();
+                        setTimeout(() => {
+                        loader.hide();
+                    }, 1000);
                         return;
                     }
+                    
                 } else {
                     this.goToLogin();
 
                 }
             }
             setTimeout(() => {
-                    loader.hide();
-                }, 1000);
+                loader.hide();
+            }, 1000);
         },
         async getResponse() {
             try {

@@ -99,7 +99,6 @@ export default {
       }
 
       console.log(localStorage)
-      console.log(this.error_message)
 
       this.$router.push({ name: 'home' })
       setTimeout(() => {
