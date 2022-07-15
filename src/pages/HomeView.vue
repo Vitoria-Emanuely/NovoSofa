@@ -64,7 +64,15 @@
                 <strong>Turma: </strong>{{ res.turma.descricao_turma }}
               </span>
             </div>
+
+            <div class="col-10">
+              <b-button v-b-modal.modalUpdate @click="selectedRaKey = res.registroAula.key" class="btn btn-outline" style="width: 20%">
+                Atualizar Registro
+              </b-button>
+            </div>
+            <hr style="width:20%;text-align:left;margin-left:0">
           </div>
+
           <div v-if="this.user.tipo_usuario == 2" class="d-flex justify-content-end mt-3">
             <b-button v-b-modal.modal class="btn btn-outline" style="width: 20%">
               Cadastrar Registro
@@ -73,6 +81,7 @@
         </div>
       </div>
     </div>
+
     <div>
       <b-modal id="modal" title="Cadastrar Registro de Aula" hide-footer>
         <div class="form-row">
@@ -118,6 +127,28 @@
         </footer>
       </b-modal>
     </div>
+
+    <div>
+      <b-modal id="modalUpdate" title="Atualizar Registro de Aula" hide-footer>
+          <div class="form-group col-6">
+            <label>Data</label>
+            <input type="date" class="form-control" name="date" autocomplete="off" v-model="date" />
+          </div>
+
+          <div class="form-group col-12">
+            <label>Descrição</label>
+            <textarea type="text" class="form-control" name="description" v-model="description"></textarea>
+          </div>
+
+        <footer>
+          <b-button type="button" class="btn-outline d-flex justify-content-center align-items-center mt-3"
+            @click="putClassRegister()">
+            Atualizar
+          </b-button>
+        </footer>
+      </b-modal>
+    </div>
+
   </div>
 </template>
 
@@ -147,7 +178,8 @@ export default {
       subjectKey: [],
       className: [],
       classKey: [],
-      registers: []
+      registers: [],
+      selectedRaKey: '',
     }
   },
   mounted() {
@@ -232,6 +264,16 @@ export default {
       console.log(data)
       this.response = axios.post('http://localhost:8000/CriarRegistroAula?token=' + this.token, data)
       // this.$router.push({ name: 'home' });
+    },
+
+    async putClassRegister() {
+      var data = {
+        key: this.selectedRaKey,
+        dt_aula: this.date,
+        descricao_aula: this.description
+      }
+      console.log(data)
+      this.response = axios.put('http://localhost:8000/AtualizarRegistroAula?token=' + this.token, data)
     },
 
     async getAllClassRegister() {
