@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 84vh;" ref="home">
+  <div style="height: 84vh;" ref="home" v-if="!loading">
     <div class="d-flex align-items-stretch flex-nowrap min-height-100 h-100" v-if="!hasBond">
       <div class="bg-cover bg-img d-none d-md-inline-flex col-lg-5 col-md-4"></div>
       <div class="card card-body mb-0 rounded-0 col-sm-12 col-md-8 col-lg-7 card-initial">
@@ -29,7 +29,7 @@
               </span>
             </div>
           </div>
-          <div class="d-flex justify-content-end mt-3">
+          <div v-if="this.user.tipo_usuario == 2" class="d-flex justify-content-end mt-3">
             <b-button v-b-modal.modal class="btn btn-outline" style="width: 20%">
               Cadastrar Registro
             </b-button>
@@ -41,38 +41,42 @@
       <b-modal id="modal" title="Cadastrar Registro de Aula" hide-footer>
         <div class="form-row">
           <div class="form-group col-12">
-            <b-form-group label="Curso:" v-slot="{ ariaDescribedby }">
-              <b-form-checkbox-group :aria-describedby="ariaDescribedby" name="course">
-              </b-form-checkbox-group>
-            </b-form-group>
+            <label>Curso</label>
+            <b-form-select v-model="selectedCourse" :options="courseName">
+            </b-form-select> 
           </div>
 
-          <div class="form-group col-6">
-            <b-form-group label="Matéria:" v-slot="{ ariaDescribedby }">
-              <b-form-checkbox-group :aria-describedby="ariaDescribedby" name="subject">
-              </b-form-checkbox-group>
-            </b-form-group>
+          <div class="form-group col-12">
+            <label>Matéria</label>
+            <b-form-select v-model="selectedSubject">
+              <option v-for="(sub, index) in subjectName" :key="index" :value="subjectKey[index]">
+              {{sub}}</option>
+            </b-form-select>
           </div>
 
-          <div class="form-group col-6">
-            <b-form-group label="Turma:" v-slot="{ ariaDescribedby }">
-              <b-form-checkbox-group :aria-describedby="ariaDescribedby" name="class">
-              </b-form-checkbox-group>
-            </b-form-group>
+          <div class="form-group col-12">
+            <label>Turma</label>
+            <b-form-select v-model="selectedClass">
+              <option v-for="(clas, index) in className" :key="index" :value="classKey[index]">
+              {{clas}}</option>
+            </b-form-select>
           </div>
+
+          
           <div class="form-group col-6">
             <label>Data</label>
-            <input type="date" class="form-control" name="date" autocomplete="off" />
+            <input type="date" class="form-control" name="date" autocomplete="off" v-model="date" />
           </div>
 
           <div class="form-group col-12">
             <label>Descrição</label>
-            <textarea type="text" class="form-control" name="description"></textarea>
-            <!-- <small v-if="v$.form.username.$error">Campo obrigatório</small> -->
+            <textarea type="text" class="form-control" name="description" v-model="description"></textarea>
           </div>
         </div>
+
         <footer>
-          <b-button type="button" class="btn-outline d-flex justify-content-center align-items-center mt-3">
+          <b-button type="button" class="btn-outline d-flex justify-content-center align-items-center mt-3"
+            @click="postClassRegister()">
             Cadastrar
           </b-button>
         </footer>
@@ -93,6 +97,20 @@ export default {
       user: {},
       response: "",
       loader: "spinner",
+      courses: [],
+      subjects: {},
+      classes: {},
+      selectedCourse: "",
+      selectedSubject: "",
+      selectedClass: "",
+      date: "",
+      description: "",
+      loading: true,
+      courseName: [],
+      subjectName: [],
+      subjectKey: [],
+      className: [],
+      classKey: []
     }
   },
   mounted() {
@@ -122,10 +140,11 @@ export default {
       this.getBonds();
     },
     async getBonds() {
-      let login = this.$refs.home;
+      console.log(this.token)
+      let home = this.$refs.home;
       let loader = this.$loading.show(
         {
-          container: login,
+          container: home,
           loader: this.loader,
         }
       );
@@ -136,20 +155,55 @@ export default {
         if (info.response.status === 404) {
           this.hasBond = false;
           setTimeout(() => {
+            this.loading = false;
             loader.hide();
           }, 1000);
           return;
         }
       } else {
         info.data.forEach(el => {
-          this.course = el.curso;
+          console.log(el)
+          this.courses = el.curso;
           this.subjects = el.materias;
-          this.classS = el.turmas;
+          this.classes = el.turmas;
         });
+        this.courses.forEach(el => {
+          this.courseName.push(el.nome_curso);
+        });
+        this.subjects.forEach(el => {
+          this.subjectName.push(el.descricao_materia);
+          this.subjectKey.push(el.key);
+        });
+        this.classes.forEach(el => {
+          this.className.push(el.descricao_turma);
+          this.classKey.push(el.key);
+        });
+        console.log(this.classes)
         setTimeout(() => {
+          this.loading = false;
           loader.hide();
         }, 1000);
       }
+
+    },
+    async postClassRegister() {
+      // var date = this.date.split('-')
+      // this.date = date[2] + '/' + date[1] + '/' + date[0];
+      var data = {
+        dt_aula: this.date, descricao_aula: this.description, curso: this.selectedCourse, turma: this.selectedClass,
+        materia: this.selectedSubject
+      }
+      console.log(data)
+      this.response = axios.post('http://localhost:8000/CriarRegistroAula?token=' + this.token, data)
+      this.$router.push({ name: 'home' });
+    },
+    async getClassRegister() {
+      this.response = axios
+        .get('http://localhost:8000/RegistroAula?token=' + this.token)
+      var info = await this.getResponse()
+      info.data.forEach(el => {
+        this.user = el;
+      });
     },
   }
 }

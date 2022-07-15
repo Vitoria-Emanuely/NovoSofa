@@ -1,5 +1,5 @@
 <template>
-    <div ref="profile">
+    <div ref="profile" v-if="!loading">
         <div class="d-flex flex-column align-items-center mt-5">
             <h4 style="color: rgb(95, 93, 93);">
                 <i class="fa fa-user"></i>
@@ -39,9 +39,11 @@
                 <div v-if="error_message == ''" class="card card-body">
                     <div class="row">
                         <div class="col-6">
-                            <span>
-                                <strong>Curso: </strong>{{ course.nome_curso }}
-                            </span>
+                            <span><strong>Curso: </strong></span>
+                            <div v-for="(cou, index) in course" :key="index">
+                                <span>{{ cou.nome_curso }}</span>
+                            </div>
+
                         </div>
                         <div class="col-6">
                             <span><strong>Matérias: </strong></span>
@@ -88,7 +90,8 @@ export default {
             subjects: [],
             classS: [],
             course: {},
-            error_message: ""
+            error_message: "",
+            loading: true
         }
     },
     beforeMount() {
@@ -121,10 +124,10 @@ export default {
             this.getProfile();
         },
         async getProfile() {
-            let login = this.$refs.profile;
+            let profile = this.$refs.profile;
             let loader = this.$loading.show(
                 {
-                    container: login,
+                    container: profile,
                     loader: this.loader,
                 }
             );
@@ -137,6 +140,7 @@ export default {
                 this.form = el;
             });
             setTimeout(() => {
+                this.loading = false;
                 loader.hide();
             }, 1000);
             this.getBonds();
@@ -148,7 +152,6 @@ export default {
             if (Object.getPrototypeOf(info) == "Error") {
                 if (info.response.status === 404) {
                     this.error_message = "Você não possui vínculos"
-
                     return;
                 }
 

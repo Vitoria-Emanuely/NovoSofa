@@ -1,5 +1,5 @@
 <template>
-    <div ref="bonds">
+    <div ref="bonds" v-if="!loading">
         <div class="d-flex flex-column align-items-center mt-5">
             <h4 style="color: rgb(95, 93, 93);">
                 <i class="fa fa-user"></i>
@@ -8,106 +8,101 @@
             <div v-if="hasBonds" class="d-flex col-8">
                 <div class="card card-body">
                     <div class="row">
-                        <div class="col-10 d-flex justify-content-between">
-                            <span>
-                                <strong>Curso: </strong>{{ course.nome_curso }}
-                            </span>
-                            <span>Carga horária: {{ course.ch_curso}} horas</span>
+                        <div class="col-10">
+                            <span><strong>Curso: </strong></span>
+                            <div class="d-flex justify-content-between" v-for="(cou, index) in course" :key="index">
+                                <span>Nome: {{ cou.nome_curso }}</span>
+                                <span>Carga horária: {{ cou.ch_curso }} horas</span>
+                            </div>
                         </div>
-                        
+
                     </div>
                     <div class="row py-4">
                         <div class="col-10">
                             <span><strong>Matérias: </strong></span>
                             <div class="d-flex justify-content-between" v-for="(sub, index) in subjects" :key="index">
                                 <span>Nome: {{ sub.descricao_materia }}</span>
-                                <span>Carga horária: {{sub.ch_materia}} horas</span>
+                                <span>Carga horária: {{ sub.ch_materia }} horas</span>
+                                <span>Data de início: {{ sub.dt_inicio }}</span>
+                                <span>Data de término: {{ sub.dt_fim }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-10">
                             <span><strong>Turmas: </strong></span>
-                            <div class="d-flex justify-content-between" v-for="(clas, index) in classS" :key="index">
+                            <div class="d-flex justify-content-between" v-for="(clas, index) in classes" :key="index">
                                 <span>Nome: {{ clas.descricao_turma }}</span>
-                                <span>Data de início: {{clas.dt_inicio}}</span>
-                                <span>Data de término: {{clas.dt_fim}}</span>
+                                <span>Data de início: {{ clas.dt_inicio }}</span>
+                                <span>Data de término: {{ clas.dt_fim }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="!hasBonds" class="card card-body">
-                <div class="form-row">
-                    <div class="form-group col-12" v-if="this.user.tipo_usuario !== 2">
-                        <label>Curso</label>
+            <div v-if="!hasBonds" class="card card-body col-8">
+            <!-- Estudante superior -->
+                <div class="form-row" v-if="this.user.tipo_usuario == 1">
+                    <div class="form-group col-12">
+                        <label>Curso:</label>
                         <b-form-select v-model="selectedCourse" :options="courseName" @change="onChange()">
                         </b-form-select>
-                        <!-- <small>Campo obrigatório</small> -->
                     </div>
 
-                    <!-- Estudante medio -->
-                    <div class=" form-group col-6" v-if="this.user.tipo_usuario == 0">
-                        <label>Turma</label>
-                        <b-form-select v-model="selectedClass" :options="classS"></b-form-select>
-                    </div>
-
-                    <div class="form-group col-6" v-if="this.user.tipo_usuario == 0">
-                        <div v-for="i in subject" :key="i">
-                            <span>{{ i }}</span>
+                    <div class="d-flex form-group col-12">
+                        <label class="mr-1">Turmas:</label>
+                        <div v-for="(clas, index) in className" :key="index">
+                            <input type="radio" :value="classKey[index]" v-model="selectedClass">
+                            <label class="ml-1 mr-3"> {{ clas }}</label>
                         </div>
                     </div>
 
-                    <!-- Estudante superior -->
-                    <div class="form-group col-6 d-flex flex-column" v-if="this.user.tipo_usuario == 1">
-                        <label>Matérias:</label>
-                        <div v-for="(sub, index) in subjectName" :key="index">
-                            <input type="checkbox" :value="subjectKey[index]" v-model="selectedSubjects">
-                            <label for="checkbox"> {{ sub }}</label>
-                        </div>
-                        <button type="button" class="btn btn-outline" @click="getClassBySubjects()"
-                            v-if="Object.keys(this.selectedSubjects).length > 0">Selecionar</button>
-                        <div v-if="Object.keys(this.subjectName).length == 0 && this.selectedCourse != null">Não há
-                            matérias cadastradas para
-                            esse curso</div>
+                    <div class="d-flex form-group col-12">
+                        <b-tabs content-class="mt-3">
+                            <b-tab v-for="(clas, index) in subjects" :key="index" :title="clas.turma.descricao_turma">
+                                <div v-for="(sub, index) in clas.materias" :key="index">
+                                    <input type="checkbox" :value="sub.key" v-model="selectedSubjects">
+                                    <label class="ml-1"> {{ sub.descricao_materia }}</label>
+                                </div>
+                            </b-tab>
+                        </b-tabs>
                     </div>
+                    <button v-if="canSend" type="button" class="btn btn-outline" @click="postSuperiorBind()">Vincular-se</button>
+                </div>
 
-                    <div class=" form-group col-6" v-if="this.user.tipo_usuario == 1">
-                        <label>Turma</label>
-                        <div v-for="i in className" :key="i">
-                            <span>{{ i }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Prof -->
-                    <div class="form-group col-6" v-if="this.user.tipo_usuario == 2">
+                <!-- Prof -->
+                <div class="form-row" v-if="this.user.tipo_usuario == 2">
+                    <div class="form-group col-12 d-flex flex-column">
                         <b-form-group label="Cursos:" v-slot="{ ariaDescribedby }">
                             <b-form-checkbox-group v-model="selectedCourses" :options="courseName"
                                 :aria-describedby="ariaDescribedby" name="course">
                             </b-form-checkbox-group>
                         </b-form-group>
+                        <button class="btn btn-outline" @click="getSubjectsAndClasses()">Selecionar</button>
                     </div>
 
-                    <div class="form-group col-6" v-if="this.user.tipo_usuario == 2">
-                        <b-form-group label="Matérias:" v-slot="{ ariaDescribedby }">
-                            <b-form-checkbox-group v-model="selectedSubjects" :options="subjectName"
-                                :aria-describedby="ariaDescribedby" name="subject">
-                            </b-form-checkbox-group>
-                        </b-form-group>
+                    <div class="form-group col-12 d-flex">
+                        <label class="mr-1">Turmas:</label>
+                        <div v-for="(clas, index) in className" :key="index">
+                            <input type="checkbox" :value="classKey[index]" v-model="selectedClasses">
+                            <label class="ml-1 mr-4"> {{ clas }}</label>
+                        </div>
                     </div>
 
-                    <div class="form-group col-6" v-if="this.user.tipo_usuario == 2">
-                        <b-form-group label="Turmas:" v-slot="{ ariaDescribedby }">
-                            <b-form-checkbox-group v-model="selectedClass" :options="className"
-                                :aria-describedby="ariaDescribedby" name="class">
-                            </b-form-checkbox-group>
-                        </b-form-group>
+                    <div class="form-group col-12">
+                        <b-tabs content-class="mt-3">
+                            <b-tab v-for="(clas, index) in subjects" :key="index" :title="clas.turma.descricao_turma">
+                                <div v-for="(sub, index) in clas.materias" :key="index">
+                                    <input type="checkbox" :value="sub.key" v-model="selectedSubjects">
+                                    <label class="ml-1"> {{ sub.descricao_materia }}</label>
+                                    {{ sub.key }}
+                                </div>
+
+                            </b-tab>
+                        </b-tabs>
                     </div>
-                    <button type="button" class="btn btn-outline" @click="postBond()"
-                        v-if="canSend">Vincular-se</button>
-
-
+                    <button v-if="canSend" type="button" class="btn btn-outline" @click="postProfessorBind()">Vincular-se</button>
                 </div>
             </div>
         </div>
@@ -123,15 +118,17 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            course: {},
+            courses: {},
             courseName: [],
-            classS: {},
-            subject: {},
+            classes: [],
+            subjects: [],
             subjectName: [],
-            subjectKey: [],
+            classKey: [],
             className: [],
-            selectedCourse: null,
+            selectedCourses: [],
+            selectedCourse: "",
             selectedClass: "",
+            selectedClasses: [],
             selectedSubjects: [],
             user: {},
             response: "",
@@ -140,8 +137,7 @@ export default {
             subjectKeyData: [],
             canSend: false,
             hasBonds: true,
-            subjects: [],
-
+            loading: true,
         }
     },
     mounted() {
@@ -170,7 +166,8 @@ export default {
         },
         onChange() {
             if (this.user.tipo_usuario == 1) {
-                this.getSuperiorSubjects();
+                this.selectedCourses.push(this.selectedCourse)
+                this.getSubjectsAndClasses();
             }
         },
         async getBonds() {
@@ -185,9 +182,10 @@ export default {
                 }
             } else {
                 info.data.forEach(el => {
+                    console.log(el)
                     this.course = el.curso;
                     this.subjects = el.materias;
-                    this.classS = el.turmas;
+                    this.classes = el.turmas;
                 });
             }
         },
@@ -203,64 +201,55 @@ export default {
                 .get('http://localhost:8000/Cursos?token=' + this.token)
             var info = await this.getResponse();
             info.data.forEach(el => {
-                this.course = el;
-                this.courseName.push(this.course.nome_curso);
+                this.courses = el;
+                this.courseName.push(el.nome_curso);
             });
             setTimeout(() => {
+                this.loading = false;
                 loader.hide();
             }, 1000);
         },
-        async getSuperiorSubjects() {
-            this.subjectName = [];
-            this.className = [];
-            this.selectedSubjects = [];
-            console.log(this.selectedCourse)
-            this.response = axios
-                .get('http://localhost:8000/SuperiorMaterias?course=' + this.selectedCourse + '&token=' + this.token)
-            var info = await this.getResponse()
-
-            info.data.forEach(el => {
-                this.subject = el;
-                this.subjectName.push(this.subject.descricao_materia);
-                this.subjectKey.push(this.subject.key);
-            });
-
-        },
-        async getClassBySubjects() {
-            this.className = [];
-            // this.selectedSubjects = [];
-            // this.data = [];
-            // Object.keys(this.selectedSubjects).length
+        async getSubjectsAndClasses() {
             var data = [];
-            this.subjectKeyData = [];
-            this.selectedSubjects.forEach(el => {
+            this.selectedCourses.forEach(el => {
                 data.push('&names=' + el);
-                this.subjectKeyData.push(el);
             });
             data = data.join('');
-            console.log(this.subjectKeyData);
-            // this.subjectKeyData = this.subjectKeyData.join('');
-            // console.log(this.subjectKeyData);
             this.response = axios
-                .get('http://localhost:8000/TurmasPorMateria?course=' + this.selectedCourse + '&token=' + this.token + data)
-            var info = await this.getResponse()
+                .get('http://localhost:8000/CursosTurmasMaterias?token=' + this.token + data);
+            var info = await this.getResponse();
             info.data.forEach(el => {
-                this.classS = el;
-                this.className.push(this.classS.descricao_turma);
+                this.classes.push(el.turmas);
+            });
+            this.classes.forEach(clas => {
+                clas.forEach(el => {
+                    this.className.push(el.turma.descricao_turma)
+                    this.classKey.push(el.turma.key);
+                    this.subjects.push(el);
+                });
             });
             this.canSend = true;
-
         },
-        async postBond() {
+        async postSuperiorBind() {
+            this.selectedCourses = this.selectedCourses.join();
             var data = {
-                course: this.selectedCourse, materia: this.subjectKeyData
+                curso: this.selectedCourses, turma: this.selectedClass, materias: this.selectedSubjects
             }
             console.log(data)
             this.response = axios.post('http://localhost:8000/SuperiorVincular?token=' + this.token, data)
 
             this.info = await this.getResponse();
             this.$router.push({ name: 'home' });
-        }
+        },
+        async postProfessorBind() {
+            var data = {
+                cursos: this.selectedCourses, materias: this.selectedSubjects, turmas: this.selectedClasses
+            }
+            this.response = axios.post('http://localhost:8000/ProfessorVincular?token=' + this.token, data)
+            this.info = await this.getResponse();
+            this.$router.push({ name: 'home' });
+        },
+
     },
 }
 </script>
@@ -275,7 +264,7 @@ export default {
     color: #274F70 !important;
     border-color: #274F70 !important;
     border-radius: 11px !important;
-    width: 40%;
+    width: 20%;
     margin-left: auto;
     margin-right: auto;
 }

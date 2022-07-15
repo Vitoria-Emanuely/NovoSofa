@@ -50,10 +50,12 @@ const router = new VueRouter({
 
 
 router.beforeEach((to, from, next) => {
-  // if (localStorage.getItem('expired' != null && ))
-  console.log(localStorage)
-  if (to.name !== "login" && to.name !== "register" && localStorage.getItem('token') == null){
-    next({name: 'login'});
+  // const dateObj = new Date().toLocaleString();
+  // if (localStorage.getItem('expired') === dateObj) {
+  //   next({ name: 'login' });
+  // }
+  if (to.name !== "login" && to.name !== "register" && localStorage.getItem('token') == null) {
+    next({ name: 'login' });
   } else {
     next();
   }

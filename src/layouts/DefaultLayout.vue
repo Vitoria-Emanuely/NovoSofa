@@ -49,6 +49,7 @@ export default {
     logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('usuario_ref');
+      localStorage.removeItem('expire');
       this.$router.push({ name: 'login' });
     }
   }

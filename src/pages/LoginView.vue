@@ -81,7 +81,7 @@ export default {
       }
 
       this.info = await getResponse()
-
+      var expire;
       if (Object.getPrototypeOf(this.info) == "Error") {
         if (this.info.response.status === 403) {
           this.error_message = "Usuário ou senha incorretos"
@@ -93,12 +93,14 @@ export default {
         }
       } else {
         this.info.data.forEach(el => {
+          expire = el.expire ;
           localStorage.setItem('token', el.token);
           localStorage.setItem('usuario_ref', el.usuario_ref);
         });
       }
-
-      console.log(localStorage)
+      expire = expire.split(/[-:T]+/);
+      var time = expire[2] + '/' + expire[1] + '/' + expire[0] + ' ' + expire[3] + ':' + expire[4] + ':' + Math.round(parseFloat(expire[5]));
+      localStorage.setItem('expire', time)
 
       this.$router.push({ name: 'home' })
       setTimeout(() => {
