@@ -16,7 +16,7 @@
     <div class="d-flex flex-column align-items-center mt-5" v-if="hasBond">
       <h2>Registro de Aulas</h2>
       <div class="d-flex col-10">
-        <div class="card card-body" v-if="this.user.tipo_usuario == 2" style="height: 100vh;">
+        <div class="card card-body" v-if="this.user.tipo_usuario == 2">
           <div class="d-flex">
             <div class="col-4" style="margin-left: -15px;">
               <label>Curso</label>
@@ -26,7 +26,6 @@
             <div class="col-4">
               <label>Matéria</label>
               <b-form-select v-model="selectedSubject" @change="onChange()">
-                <option value="a">a</option>
                 <option v-for="(sub, index) in subjectName" :key="index" :value="subjectKey[index]">
                   {{ sub }}</option>
               </b-form-select>

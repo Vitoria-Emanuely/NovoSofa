@@ -96,7 +96,6 @@
                                 <div v-for="(sub, index) in clas.materias" :key="index">
                                     <input type="checkbox" :value="sub.key" v-model="selectedSubjects">
                                     <label class="ml-1"> {{ sub.descricao_materia }}</label>
-                                    {{ sub.key }}
                                 </div>
 
                             </b-tab>
