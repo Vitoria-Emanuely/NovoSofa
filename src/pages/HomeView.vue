@@ -15,30 +15,31 @@
     </div>
     <div class="d-flex flex-column align-items-center mt-5" v-if="hasBond">
       <h2>Registro de Aulas</h2>
-      <div class="d-flex col-12">
-        <div class="card card-body">
+      <div class="d-flex col-10">
+        <div class="card card-body" v-if="this.user.tipo_usuario == 2">
           <div class="d-flex">
-            <div class="col-4">
+            <div class="col-4" style="margin-left: -15px;">
               <label>Curso</label>
-              <b-form-select v-model="selectedCourse" :options="courseName">
+              <b-form-select v-model="selectedCourse" :options="courseName" @change="onChange()">
               </b-form-select>
             </div>
             <div class="col-4">
               <label>Matéria</label>
-              <b-form-select v-model="selectedSubject">
-                <option v-for="(sub, index) in subjectName" :key="index" :value="subjectKey[index]">
+              <b-form-select v-model="selectedSubject" @change="onChange()">
+              <option value="a">a</option>
+                <option v-for="(sub, index) in subjectName" :key="index" :value="subjectKey[index]" >
                   {{ sub }}</option>
               </b-form-select>
             </div>
             <div class="col-4">
-            <label>Turma</label>
-            <b-form-select v-model="selectedClass">
-              <option v-for="(clas, index) in className" :key="index" :value="classKey[index]">
-                {{ clas }}</option>
-            </b-form-select>
+              <label>Turma</label>
+              <b-form-select v-model="selectedClass" @change="onChange()">
+                <option v-for="(clas, index) in className" :key="index" :value="classKey[index]" >
+                  {{ clas }}</option>
+              </b-form-select>
+            </div>
           </div>
-          </div>
-          <div class="row" v-for="(res, index) in registers" :key="index">
+          <div class="row py-3" v-for="(res, index) in registers" :key="index">
             <div class="col-2">
               <span>
                 <strong>Data: </strong>{{ res.registroAula.dt_aula }}
@@ -54,23 +55,27 @@
                 <strong>Curso: </strong>{{ res.curso.nome_curso }}
               </span>
             </div>
-            <div class="col-10">
+            <div class="col-6">
               <span>
                 <strong>Matéria: </strong>{{ res.materia.descricao_materia }}
               </span>
             </div>
-            <div class="col-10">
+            <div class="col-6">
               <span>
                 <strong>Turma: </strong>{{ res.turma.descricao_turma }}
               </span>
             </div>
           </div>
+          <div class="pt-4" v-if="Object.keys(registers).length == 0">
+          Não há registros</div>
           <div v-if="this.user.tipo_usuario == 2" class="d-flex justify-content-end mt-3">
             <b-button v-b-modal.modal class="btn btn-outline" style="width: 20%">
               Cadastrar Registro
             </b-button>
           </div>
         </div>
+        <!-- <div class="card card-body" v-if="this.user.tipo_usuario == 1">
+        Você naõ é um professor!</div> -->
       </div>
     </div>
     <div>
@@ -177,7 +182,6 @@ export default {
       this.getBonds();
     },
     async getBonds() {
-      console.log(this.token)
       let home = this.$refs.home;
       let loader = this.$loading.show(
         {
@@ -233,17 +237,19 @@ export default {
       this.response = axios.post('http://localhost:8000/CriarRegistroAula?token=' + this.token, data)
       // this.$router.push({ name: 'home' });
     },
-
+    onChange() {
+      this.getAllClassRegister();
+    },
     async getAllClassRegister() {
-      this.selectedClass = "";
-      this.selectedCourse = "";
-      this.selectedSubject = "";
+      this.registers = [];
+      console.log('entrei')
       this.response = axios
-        .get('http://localhost:8000/RegistroAula?token=' + this.token + this.selectedCourse + this.selectedClass + this.selectedSubject);
+        .get('http://localhost:8000/RegistroAula?token=' + this.token + '&curso=' + this.selectedCourse + '&turma='+ this.selectedClass + '&materia=' + this.selectedSubject);
       var info = await this.getResponse()
       info.data.forEach(el => {
         this.registers.push(el);
       });
+      
       console.log(this.registers)
     },
   }
