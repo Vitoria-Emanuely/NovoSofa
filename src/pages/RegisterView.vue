@@ -168,11 +168,11 @@ export default {
                         this.error_message = "Erro ao cadastrar o usuário. Verifique se o usuário já existe"
                         this.clearForm();
                         setTimeout(() => {
-                        loader.hide();
-                    }, 1000);
+                            loader.hide();
+                        }, 1000);
                         return;
                     }
-                    
+
                 } else {
                     this.goToLogin();
 
@@ -226,7 +226,9 @@ a:hover {
 }
 
 .bg-img-login {
-    background: #fff;
+    background-image: url('../assets/couch.webp');
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .cursor-pointer {

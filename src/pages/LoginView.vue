@@ -129,8 +129,11 @@ a:hover {
 }
 
 .bg-img-login {
-  background-image: #fff;
+  background-image: url('../assets/couch.webp');
+  background-repeat: no-repeat;
+  background-position: center;
 }
+
 
 .bg-login {
   /* background: rgb(138, 11, 74); */

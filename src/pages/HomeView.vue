@@ -16,7 +16,7 @@
     <div class="d-flex flex-column align-items-center mt-5" v-if="hasBond">
       <h2>Registro de Aulas</h2>
       <div class="d-flex col-10">
-        <div class="card card-body" v-if="this.user.tipo_usuario == 2">
+        <div class="card card-body" v-if="this.user.tipo_usuario == 2" style="height: 100vh;">
           <div class="d-flex">
             <div class="col-4" style="margin-left: -15px;">
               <label>Curso</label>
@@ -26,26 +26,26 @@
             <div class="col-4">
               <label>Matéria</label>
               <b-form-select v-model="selectedSubject" @change="onChange()">
-              <option value="a">a</option>
-                <option v-for="(sub, index) in subjectName" :key="index" :value="subjectKey[index]" >
+                <option value="a">a</option>
+                <option v-for="(sub, index) in subjectName" :key="index" :value="subjectKey[index]">
                   {{ sub }}</option>
               </b-form-select>
             </div>
             <div class="col-4">
               <label>Turma</label>
               <b-form-select v-model="selectedClass" @change="onChange()">
-                <option v-for="(clas, index) in className" :key="index" :value="classKey[index]" >
+                <option v-for="(clas, index) in className" :key="index" :value="classKey[index]">
                   {{ clas }}</option>
               </b-form-select>
             </div>
           </div>
           <div class="row py-3" v-for="(res, index) in registers" :key="index">
-            <div class="col-2">
+            <div class="col-3">
               <span>
                 <strong>Data: </strong>{{ res.registroAula.dt_aula }}
               </span>
             </div>
-            <div class="col-10">
+            <div class="col-9">
               <span>
                 <strong>Descrição: </strong>{{ res.registroAula.descricao_aula }}
               </span>
@@ -66,15 +66,15 @@
               </span>
             </div>
 
-            <div class="col-10">
-              <b-button v-b-modal.modalUpdate @click="selectedRaKey = res.registroAula.key" class="btn btn-outline" style="width: 20%">
-                Atualizar Registro
-              </b-button>
-            </div>
-            <hr style="width:20%;text-align:left;margin-left:0">
+            <!-- <div class="col-8"> -->
+            <b-button v-b-modal.modalUpdate @click="selectedRaKey = res.registroAula.key" class="btn btn-outline mt-3" style="width: 20%;margin-left: auto;margin-right: auto;">
+              Atualizar Registro
+            </b-button>
+            <!-- </div> -->
+            <!-- <hr style="width:20%;text-align:left;margin-left:0"> -->
           </div>
           <div class="pt-4" v-if="Object.keys(registers).length == 0">
-          Não há registros</div>
+            Não há registros</div>
 
           <div v-if="this.user.tipo_usuario == 2" class="d-flex justify-content-end mt-3">
             <b-button v-b-modal.modal class="btn btn-outline" style="width: 20%">
@@ -82,8 +82,8 @@
             </b-button>
           </div>
         </div>
-        <!-- <div class="card card-body" v-if="this.user.tipo_usuario == 1">
-        Você naõ é um professor!</div> -->
+        <div class="card card-body" v-if="this.user.tipo_usuario == 1">
+          Você não é um professor!</div>
       </div>
     </div>
 
@@ -135,15 +135,15 @@
 
     <div>
       <b-modal id="modalUpdate" title="Atualizar Registro de Aula" hide-footer>
-          <div class="form-group col-6">
-            <label>Data</label>
-            <input type="date" class="form-control" name="date" autocomplete="off" v-model="date" />
-          </div>
+        <div class="form-group col-6">
+          <label>Data</label>
+          <input type="date" class="form-control" name="date" autocomplete="off" v-model="date" />
+        </div>
 
-          <div class="form-group col-12">
-            <label>Descrição</label>
-            <textarea type="text" class="form-control" name="description" v-model="description"></textarea>
-          </div>
+        <div class="form-group col-12">
+          <label>Descrição</label>
+          <textarea type="text" class="form-control" name="description" v-model="description"></textarea>
+        </div>
 
         <footer>
           <b-button type="button" class="btn-outline d-flex justify-content-center align-items-center mt-3"
@@ -185,6 +185,7 @@ export default {
       classKey: [],
       registers: [],
       selectedRaKey: '',
+      modalShow: false
     }
   },
   mounted() {
@@ -279,20 +280,20 @@ export default {
         dt_aula: this.date,
         descricao_aula: this.description
       }
-      console.log(data)
-      this.response = axios.put('http://localhost:8000/AtualizarRegistroAula?token=' + this.token, data)
+      this.response = axios.put('http://localhost:8000/AtualizarRegistroAula?token=' + this.token, data);
+      this.getAllClassRegister();
     },
 
     async getAllClassRegister() {
       this.registers = [];
       console.log('entrei')
       this.response = axios
-        .get('http://localhost:8000/RegistroAula?token=' + this.token + '&curso=' + this.selectedCourse + '&turma='+ this.selectedClass + '&materia=' + this.selectedSubject);
+        .get('http://localhost:8000/RegistroAula?token=' + this.token + '&curso=' + this.selectedCourse + '&turma=' + this.selectedClass + '&materia=' + this.selectedSubject);
       var info = await this.getResponse()
       info.data.forEach(el => {
         this.registers.push(el);
       });
-      
+
       console.log(this.registers)
     },
   }
