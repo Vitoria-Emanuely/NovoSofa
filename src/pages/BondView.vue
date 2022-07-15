@@ -181,7 +181,6 @@ export default {
                 }
             } else {
                 info.data.forEach(el => {
-                    console.log(el)
                     this.course = el.curso;
                     this.subjects = el.materias;
                     this.classes = el.turmas;
@@ -234,7 +233,6 @@ export default {
             var data = {
                 curso: this.selectedCourses, turma: this.selectedClass, materias: this.selectedSubjects
             }
-            console.log(data)
             this.response = axios.post('http://localhost:8000/SuperiorVincular?token=' + this.token, data)
 
             this.info = await this.getResponse();

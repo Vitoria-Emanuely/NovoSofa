@@ -65,12 +65,9 @@
               </span>
             </div>
 
-            <!-- <div class="col-8"> -->
             <b-button v-b-modal.modalUpdate @click="selectedRaKey = res.registroAula.key" class="btn btn-outline mt-3" style="width: 20%;margin-left: auto;margin-right: auto;">
               Atualizar Registro
             </b-button>
-            <!-- </div> -->
-            <!-- <hr style="width:20%;text-align:left;margin-left:0"> -->
           </div>
           <div class="pt-4" v-if="Object.keys(registers).length == 0">
             Não há registros</div>
@@ -265,9 +262,8 @@ export default {
         dt_aula: this.date, descricao_aula: this.description, curso: this.selectedCourse, turma: this.selectedClass,
         materia: this.selectedSubject
       }
-      console.log(data)
       this.response = axios.post('http://localhost:8000/CriarRegistroAula?token=' + this.token, data)
-      // this.$router.push({ name: 'home' });
+      this.getAllClassRegister();
     },
     onChange() {
       this.getAllClassRegister();
@@ -285,15 +281,12 @@ export default {
 
     async getAllClassRegister() {
       this.registers = [];
-      console.log('entrei')
       this.response = axios
         .get('http://localhost:8000/RegistroAula?token=' + this.token + '&curso=' + this.selectedCourse + '&turma=' + this.selectedClass + '&materia=' + this.selectedSubject);
       var info = await this.getResponse()
       info.data.forEach(el => {
         this.registers.push(el);
       });
-
-      console.log(this.registers)
     },
   }
 }
